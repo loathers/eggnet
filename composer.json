@@ -1,0 +1,13 @@
+{
+    "name": "loathers/eggnet",
+    "description": "Monitoring of the Chest Mimic familiar's DNA Lab contents in the online RPG, Kingdom of Loathing",
+    "type": "project",
+    "license": "gpl-3.0-or-later",
+    "authors": [
+        {
+            "name": "Semenar",
+            "email": "semenuska201@yandex.ru"
+        }
+    ],
+    "require": {}
+}
