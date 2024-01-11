@@ -9,5 +9,7 @@
             "email": "semenuska201@yandex.ru"
         }
     ],
-    "require": {}
+    "require": {
+        "php": ">=7"
+    }
 }
