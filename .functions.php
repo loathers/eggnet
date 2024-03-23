@@ -1,16 +1,17 @@
 <?php
-// Helper functions
 
-function connect_to_database(): mysqli {
+function connect_to_database(): mysqli
+{
     global $db_username, $db_password, $db_host, $db_name;
-	$conn = new mysqli($db_host, $db_username, $db_password, $db_name);
-	if (!$conn) die('Cannot connect to database');
-	$conn->set_charset("utf8");
+    $conn = new mysqli($db_host, $db_username, $db_password, $db_name);
+    if (!$conn) die('Cannot connect to database');
+    $conn->set_charset("utf8");
     setup_database($conn);
-	return $conn;
+    return $conn;
 }
 
-function setup_database(mysqli $conn) {
+function setup_database(mysqli $conn)
+{
     $conn->query("
         CREATE TABLE IF NOT EXISTS `eggnet_monitor` (
             `monster_id` int(11) NOT NULL,
