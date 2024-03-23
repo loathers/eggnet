@@ -44,8 +44,8 @@ foreach ($monster_list as $monster) {
 		$amount_collected = 100 - (int)(filter_var(substr($option_contents, $last_bracket_pos), FILTER_SANITIZE_NUMBER_INT));
 	}
 	
-	execute_query($conn, "REPLACE INTO `eggnet_monitor` (monster_id, eggs_donated) VALUES ({$value}, {$amount_collected})");
-	execute_query($conn, "INSERT INTO `eggnet_monitor_history` (monster_id, eggs_donated) VALUES ({$value}, {$amount_collected})");
+	$conn->query("REPLACE INTO `eggnet_monitor` (monster_id, eggs_donated) VALUES ({$value}, {$amount_collected})");
+	$conn->query("INSERT INTO `eggnet_monitor_history` (monster_id, eggs_donated) VALUES ({$value}, {$amount_collected})");
 }
-mysqli_close($conn);
-?>
+
+$conn->close();
