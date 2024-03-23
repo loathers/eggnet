@@ -4,6 +4,7 @@ include_once(".functions.php");
 
 $conn = connect_to_database();
 
+ini_set('memory_limit', '256M');
 $db_results = execute_query($conn, "SELECT * FROM `eggnet_monitor`");
 
 $last_update_ts = 0;
