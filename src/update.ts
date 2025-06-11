@@ -90,8 +90,6 @@ async function runUpdate(): Promise<void> {
     console.log("Authenticating with KoL...");
     const html = await fetchDnaLab();
 
-    console.log(html);
-
     // Process the data
     console.log("Processing egg data...");
     await processEggData(html);
