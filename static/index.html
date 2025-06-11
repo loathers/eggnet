@@ -1,72 +1,47 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-  <head>
-    <title>EggNet Monitor</title>
+    <head>
+        <title>EggNet Monitor</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
 
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
-    />
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
-    <script type="text/javascript" src="misc.js?version=4"></script>
-    <script type="text/javascript" src="index.js?version=4"></script>
+        <script src="https://unpkg.com/jquery"></script>
+        <script type="text/javascript" src="misc.js?version=7"></script>
+        <script type="text/javascript" src="index.js?version=7"></script>
 
-    <link rel="stylesheet" type="text/css" href="index.css?version=4" />
-  </head>
-  <body class="dark">
-    <div id="loading">
-      <div class="outer-loading-circle">
-        <div class="inner-loading-circle"></div>
-      </div>
-      <p>Loading...</p>
-    </div>
-    <div id="app">
-      <p class="header">EggNet Monitor</p>
-      <p class="last-update">Last update: <span id="last_update_ts"></span></p>
-      <div class="total-progress" id="total_progress">
-        <div class="barfill"></div>
-        <p class="eggs-total"></p>
-      </div>
-      <div class="tabbar">
-        <div
-          class="button"
-          tab="name"
-          onclick="selectTab(this.getAttribute('tab'))"
-        >
-          Sort by name
+        <link rel="stylesheet" type="text/css" href="index.css?version=7">
+    </head>
+    <body class="dark">
+        <div id="loading">
+            <div class="outer-loading-circle">
+                <div class="inner-loading-circle">
+                </div>
+            </div>
+            <p>Loading...</p>
         </div>
-        <div
-          class="button"
-          tab="id"
-          onclick="selectTab(this.getAttribute('tab'))"
-        >
-          Sort by ID
+        <div id="app">
+            <p class="header">EggNet Monitor</p>
+            <p class="last-update">Last update: <span id="last_update_ts"></span></p>
+			<div class="total-progress" id="total_progress">
+                <div class="barfill"></div>
+                <p class="eggs-total"></p>
+			</div>
+            <div class="tabbar">
+                <div class="button" tab="name" onclick="selectTab(this.getAttribute('tab'))">Sort by name</div>
+                <div class="button" tab="id" onclick="selectTab(this.getAttribute('tab'))">Sort by ID</div>
+                <div class="button" tab="completion" onclick="selectTab(this.getAttribute('tab'))">Sort by completion</div>
+                <div class="button" tab="ascension" onclick="selectTab(this.getAttribute('tab'))">Sort by ascension relevance</div>
+            </div>
+            <div class="settings">
+                <label><input type="checkbox" class="setting" id="setting_hide_completed" setting="hide_completed" oninput="toggleSetting(this.getAttribute('setting'), this.checked)"> Hide fully donated monsters</label>
+            </div>
+            <div class="monsterlist">
+            </div>
+            <p class="footer">Made by Semenar (#3275442)</p>
         </div>
-        <div
-          class="button"
-          tab="completion"
-          onclick="selectTab(this.getAttribute('tab'))"
-        >
-          Sort by completion
-        </div>
-        <div
-          class="button"
-          tab="ascension"
-          onclick="selectTab(this.getAttribute('tab'))"
-        >
-          Sort by ascension relevance
-        </div>
-      </div>
-      <div class="monsterlist"></div>
-      <p class="footer">Made by Semenar (#3275442)</p>
-    </div>
-  </body>
+    </body>
 </html>
