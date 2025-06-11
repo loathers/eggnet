@@ -1,15 +1,13 @@
 import express from "express";
 import path from "path";
-import { config } from "./config";
-import { setupDatabase, getEggStatus } from "./database";
+import { getEggStatus } from "./database";
 
 const app = express()
   // Serve static files (CSS, JS, etc.)
   .use(express.static(path.join(__dirname, "../static")))
   // Serve the main HTML page
   .use("/", express.static(path.join(__dirname, "../static", "index.html")))
-  // API endpoint for egg status (replaces status.php)
-  .get("/status.php", async (req, res) => {
+  .get("/status", async (req, res) => {
     try {
       const data = await getEggStatus();
       res.setHeader("Content-Type", "application/json; charset=utf-8");
@@ -27,17 +25,12 @@ const app = express()
 // Start server
 async function startServer() {
   try {
-    // Setup database
-    await setupDatabase();
-    console.log("Database setup completed");
-
     // Start listening
-    app.listen(config.server.port, () => {
+    const listener = app.listen(process.env.PORT || 3000, () => {
+      const addr = listener.address();
+      const link = (!addr || typeof addr === "string") ? addr : `port ${addr.port}`;
       console.log(
-        `EggNet Monitor server running on port ${config.server.port}`,
-      );
-      console.log(
-        `Visit http://localhost:${config.server.port} to view the monitor`,
+        `EggNet Monitor server running on ${link}`,
       );
     });
   } catch (error) {

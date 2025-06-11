@@ -19,3 +19,5 @@ yarn-error.log*
 # Logs
 logs/
 *.log
+
+/src/generated/prisma

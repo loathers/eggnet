@@ -1,50 +1,11 @@
-import axios from "axios";
 import { JSDOM } from "jsdom";
-import { config } from "./config";
-import { setupDatabase, updateEggStatus, closeConnection } from "./database";
+import { updateEggStatus } from "./database";
+import { Client } from "kol.js";
 
-async function authenticate(): Promise<string> {
-  try {
-    const axiosInstance = axios.create({
-      withCredentials: true,
-      timeout: 30000,
-      headers: {
-        "User-Agent": "EggNetMonitor/1.0",
-      },
-    });
-
-    // Login to KoL
-    await axiosInstance.post(
-      `${config.website}/login.php`,
-      new URLSearchParams({
-        loggingin: "Yup.",
-        loginname: config.kol.username,
-        password: config.kol.password,
-        secure: "0",
-        submitbutton: "Log In",
-      }),
-      {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      },
-    );
-
-    // Navigate to DNA lab
-    await axiosInstance.get(
-      `${config.website}/place.php?whichplace=town_right&action=townright_dna`,
-    );
-
-    // Get the choice page with egg data
-    const response = await axiosInstance.get(
-      `${config.website}/choice.php?forceoption=0`,
-    );
-
-    return response.data;
-  } catch (error) {
-    console.error("Authentication failed:", error);
-    throw new Error("Failed to authenticate with KoL");
-  }
+async function fetchDnaLab(): Promise<string> {
+  const client = new Client(process.env.KOL_USERNAME!, process.env.KOL_PASSWORD!);
+  await client.fetchText("place.php?whichplace=town_right&action=townright_dna");
+  return await client.fetchText("choice.php?forceoption=0");
 }
 
 async function processEggData(html: string): Promise<void> {
@@ -114,19 +75,17 @@ async function runUpdate(): Promise<void> {
     console.log("Starting EggNet update process...");
 
     // Validate configuration
-    if (!config.kol.username || !config.kol.password) {
+    if (!process.env.KOL_USERNAME || !process.env.KOL_PASSWORD) {
       throw new Error(
         "KOL_USERNAME and KOL_PASSWORD environment variables must be set",
       );
     }
 
-    // Setup database
-    await setupDatabase();
-    console.log("Database setup completed");
-
     // Authenticate and get data
     console.log("Authenticating with KoL...");
-    const html = await authenticate();
+    const html = await fetchDnaLab();
+
+    console.log(html)
 
     // Process the data
     console.log("Processing egg data...");
@@ -136,8 +95,6 @@ async function runUpdate(): Promise<void> {
   } catch (error) {
     console.error("Update process failed:", error);
     process.exit(1);
-  } finally {
-    await closeConnection();
   }
 }
 

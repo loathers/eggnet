@@ -57,7 +57,7 @@ This can be scheduled to run periodically using cron or similar.
 ### API Endpoints
 
 - `GET /` - Main monitor page
-- `GET /status.php` - JSON API returning egg status data
+- `GET /status` - JSON API returning egg status data
 - `GET /health` - Health check endpoint
 
 ## Migration from PHP
