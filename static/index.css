@@ -1,199 +1,206 @@
-html, body, p {
-    margin: 0;
+html,
+body,
+p {
+  margin: 0;
 }
 
 body {
-    background-color: var(--color-bg);
-    color: var(--color-text);
-    font-family: 'Open Sans', sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: "Open Sans", sans-serif;
 }
 
 body.dark {
-    --color-bg: #010203;
-    --color-text: #FFFFFF;
-    --color-text-secondary: #CCCCCC;
-    --color-content-pane: #2D2A3B;
-    --color-selected: #688B58;
-    --color-tab-active: #54428E;
-    --color-tab-active-shadow: #54428E80;
-    --color-tab-inactive: #404040;
-    --color-tab-inactive-shadow: #40404080;
-    --color-warning-yes-solid: #6492CD;
-    --color-warning-yes-transparent: #6492CD32;
-    --color-warning-maybe-solid: #cbcd64;
-    --color-warning-maybe-transparent: #cbcd6432;
-    --color-warning-no-solid: #cd6464;
-    --color-warning-no-transparent: #CD646432;
+  --color-bg: #010203;
+  --color-text: #ffffff;
+  --color-text-secondary: #cccccc;
+  --color-content-pane: #2d2a3b;
+  --color-selected: #688b58;
+  --color-tab-active: #54428e;
+  --color-tab-active-shadow: #54428e80;
+  --color-tab-inactive: #404040;
+  --color-tab-inactive-shadow: #40404080;
+  --color-warning-yes-solid: #6492cd;
+  --color-warning-yes-transparent: #6492cd32;
+  --color-warning-maybe-solid: #cbcd64;
+  --color-warning-maybe-transparent: #cbcd6432;
+  --color-warning-no-solid: #cd6464;
+  --color-warning-no-transparent: #cd646432;
 }
 
 body.dark img {
-    filter: invert(1);
-    mix-blend-mode: lighten;
+  filter: invert(1);
+  mix-blend-mode: lighten;
 }
 
 a {
-    color: var(--color-text);
+  color: var(--color-text);
 }
 
 #loading {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 body.loaded #loading {
-    display: none;
+  display: none;
 }
 
 .outer-loading-circle {
-    margin: 1em;
-    padding: 0.5em;
-    width: 5em;
-    height: 5em;
-    border-radius: 50%;
-    background: conic-gradient(var(--color-bg) 0deg calc(var(--first-pointer) * 360deg), var(--color-text) calc(var(--first-pointer) * 360deg) calc(var(--second-pointer) * 360deg), var(--color-bg) calc(var(--second-pointer) * 360deg) 360deg);
+  margin: 1em;
+  padding: 0.5em;
+  width: 5em;
+  height: 5em;
+  border-radius: 50%;
+  background: conic-gradient(
+    var(--color-bg) 0deg calc(var(--first-pointer) * 360deg),
+    var(--color-text) calc(var(--first-pointer) * 360deg)
+      calc(var(--second-pointer) * 360deg),
+    var(--color-bg) calc(var(--second-pointer) * 360deg) 360deg
+  );
 }
 
 .inner-loading-circle {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    background-color: var(--color-bg);
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: var(--color-bg);
 }
 
 body:not(.loaded) #app {
-    display: none;
+  display: none;
 }
 
 .button {
-    border-radius: 1em;
-    padding: 0.5em;
-    /*margin-top: 1em;
+  border-radius: 1em;
+  padding: 0.5em;
+  /*margin-top: 1em;
     margin-bottom: 1em;*/
-    background-color: var(--color-tab-inactive);
-    box-shadow: 0.3em 0.3em var(--color-tab-inactive-shadow);
-    cursor: pointer;
-    text-align: center;
-    user-select: none;
+  background-color: var(--color-tab-inactive);
+  box-shadow: 0.3em 0.3em var(--color-tab-inactive-shadow);
+  cursor: pointer;
+  text-align: center;
+  user-select: none;
 }
 
 .button.active {
-    background-color: var(--color-tab-active);
-    box-shadow: 0.3em 0.3em var(--color-tab-active-shadow);
+  background-color: var(--color-tab-active);
+  box-shadow: 0.3em 0.3em var(--color-tab-active-shadow);
 }
 
 /* Specific project CSS */
 
 .header {
-    font-size: 2em;
-    margin: 0.5em;
-    text-align: center;
+  font-size: 2em;
+  margin: 0.5em;
+  text-align: center;
 }
 
 .tabbar {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-auto-rows: 1fr;
-    gap: 1em;
-    margin-left: 1em;
-    margin-right: 1em;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 1fr;
+  gap: 1em;
+  margin-left: 1em;
+  margin-right: 1em;
 }
 
 .monsterlist {
-    margin-top: 1em;
+  margin-top: 1em;
 }
 
 .monster {
-    display: flex;
-    flex-direction: row;
-    position: relative;
-    align-items: center;
-    margin: 0.5em;
-    gap: 0.5em;
-    border-radius: 1em;
-    padding-left: 1em;
-    padding-right: 1em;
-    height: 3em;
-    background-color: var(--color-warning-yes-transparent);
-    overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  align-items: center;
+  margin: 0.5em;
+  gap: 0.5em;
+  border-radius: 1em;
+  padding-left: 1em;
+  padding-right: 1em;
+  height: 3em;
+  background-color: var(--color-warning-yes-transparent);
+  overflow: hidden;
 }
 
 .monster-image {
-    max-height: 3em;
-    max-width: 3em;
-    flex-basis: 3em;
-    z-index: 1;
+  max-height: 3em;
+  max-width: 3em;
+  flex-basis: 3em;
+  z-index: 1;
 }
 
 .monster-name {
-    z-index: 1;
+  z-index: 1;
 }
 
 .monster-badge {
-    flex-grow: 1;
-    text-align: right;
-    z-index: 1;
+  flex-grow: 1;
+  text-align: right;
+  z-index: 1;
 }
 
 .barfill {
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    right: calc(100% - var(--percentage));
-    background-color: var(--color-selected);
-    opacity: 0.5;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: calc(100% - var(--percentage));
+  background-color: var(--color-selected);
+  opacity: 0.5;
 }
 
 .last-update {
-    font-size: 0.8em;
-    margin: 0.8em;
+  font-size: 0.8em;
+  margin: 0.8em;
 }
 
 .footer {
-    font-size: 0.8em;
-    margin: 0.8em;
-    text-align: right;
+  font-size: 0.8em;
+  margin: 0.8em;
+  text-align: right;
 }
 
 .total-progress {
-    display: flex;
-    flex-direction: row;
-    position: relative;
-    align-items: center;
-    justify-content: center;
-    margin: 1em;
-    gap: 0.5em;
-    height: 1.5em;
-    background-color: var(--color-content-pane);
-    overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  margin: 1em;
+  gap: 0.5em;
+  height: 1.5em;
+  background-color: var(--color-content-pane);
+  overflow: hidden;
 }
 
 .eggs-total {
-    z-index: 1;
+  z-index: 1;
 }
 
 .settings {
-    margin-top: 1em;
-    margin-left: 1em;
-    margin-right: 1em;
+  margin-top: 1em;
+  margin-left: 1em;
+  margin-right: 1em;
 }
 
 @media only screen and (max-width: 1200px) {
-    .tabbar {
-        grid-template-columns: repeat(2, 1fr);
-    }
+  .tabbar {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media only screen and (max-width: 600px) {
-    .tabbar {
-        display: flex;
-        flex-direction: column;
-    }
+  .tabbar {
+    display: flex;
+    flex-direction: column;
+  }
 }

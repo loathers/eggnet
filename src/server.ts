@@ -28,10 +28,9 @@ async function startServer() {
     // Start listening
     const listener = app.listen(process.env.PORT || 3000, () => {
       const addr = listener.address();
-      const link = (!addr || typeof addr === "string") ? addr : `port ${addr.port}`;
-      console.log(
-        `EggNet Monitor server running on ${link}`,
-      );
+      const link =
+        !addr || typeof addr === "string" ? addr : `port ${addr.port}`;
+      console.log(`EggNet Monitor server running on ${link}`);
     });
   } catch (error) {
     console.error("Failed to start server:", error);

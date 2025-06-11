@@ -3,8 +3,13 @@ import { updateEggStatus } from "./database";
 import { Client } from "kol.js";
 
 async function fetchDnaLab(): Promise<string> {
-  const client = new Client(process.env.KOL_USERNAME!, process.env.KOL_PASSWORD!);
-  await client.fetchText("place.php?whichplace=town_right&action=townright_dna");
+  const client = new Client(
+    process.env.KOL_USERNAME!,
+    process.env.KOL_PASSWORD!,
+  );
+  await client.fetchText(
+    "place.php?whichplace=town_right&action=townright_dna",
+  );
   return await client.fetchText("choice.php?forceoption=0");
 }
 
@@ -85,7 +90,7 @@ async function runUpdate(): Promise<void> {
     console.log("Authenticating with KoL...");
     const html = await fetchDnaLab();
 
-    console.log(html)
+    console.log(html);
 
     // Process the data
     console.log("Processing egg data...");
