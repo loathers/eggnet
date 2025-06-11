@@ -18,7 +18,7 @@ function processMafiaFormatFile(data) {
 var result = { finished: false, eggs: {}, process_status: {} };
 
 function processEggStatus(data) {
-  result.last_update_ts = data.last_update;
+  result.last_update = new Date(data.lastUpdate);
   result.eggs = data.eggs;
   result.process_status.eggs = true;
 }
@@ -189,9 +189,8 @@ function initialSetup() {
   }
 
   // Set last update time
-  let last_update_date = new Date(1000 * result.last_update_ts + 7 * 3600000);
-  document.getElementById("last_update_ts").textContent =
-    last_update_date.toGMTString();
+  document.getElementById("last_update").textContent =
+    result.last_update.toGMTString();
 
   // Set egg counts
   let total_eggs = 0;

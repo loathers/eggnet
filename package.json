@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Monitoring of the Chest Mimic familiar's DNA Lab contents in the online RPG, Kingdom of Loathing",
   "main": "src/server.ts",
+  "type": "module",
   "scripts": {
     "start": "node --env-file=.env --import tsx src/server.ts",
     "dev": "tsx watch --env-file=.env src/server.ts",
@@ -14,7 +15,7 @@
     "express": "^5.1.0",
     "jsdom": "^26.1.0",
     "kol.js": "^0.1.8",
-    "tsx": "^4.19.4"
+    "tsx": "^4.20.1"
   },
   "devDependencies": {
     "@types/express": "^5.0.3",

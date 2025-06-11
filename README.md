@@ -1,6 +1,6 @@
 # EggNet Monitor
 
-Monitoring of the Chest Mimic familiar's DNA Lab contents in the MMORPG, Kingdom of Loathing.
+Monitoring of the Chest Mimic familiar's DNA Lab contents in the MMORPG, Kingdom of Loathing. It was written by @Semenar and converted to TypeScript by @gausie.
 
 ## Setup
 
@@ -57,4 +57,3 @@ This can be scheduled to run periodically using cron or similar.
 
 - `GET /` - Main monitor page
 - `GET /status` - JSON API returning egg status data
-- `GET /health` - Health check endpoint

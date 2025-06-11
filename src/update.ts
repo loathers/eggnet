@@ -1,6 +1,8 @@
 import { JSDOM } from "jsdom";
-import { updateEggStatus } from "./database";
 import { Client } from "kol.js";
+import * as url from "node:url";
+
+import { updateEggStatus } from "./database.js";
 
 async function fetchDnaLab(): Promise<string> {
   const client = new Client(
@@ -76,41 +78,32 @@ async function processEggData(html: string): Promise<void> {
 }
 
 async function runUpdate(): Promise<void> {
-  try {
-    console.log("Starting EggNet update process...");
+  console.log("Starting EggNet update process...");
 
-    // Validate configuration
-    if (!process.env.KOL_USERNAME || !process.env.KOL_PASSWORD) {
-      throw new Error(
-        "KOL_USERNAME and KOL_PASSWORD environment variables must be set",
-      );
-    }
-
-    // Authenticate and get data
-    console.log("Authenticating with KoL...");
-    const html = await fetchDnaLab();
-
-    // Process the data
-    console.log("Processing egg data...");
-    await processEggData(html);
-
-    console.log("Update process completed successfully");
-  } catch (error) {
-    console.error("Update process failed:", error);
-    process.exit(1);
+  // Validate configuration
+  if (!process.env.KOL_USERNAME || !process.env.KOL_PASSWORD) {
+    throw new Error(
+      "KOL_USERNAME and KOL_PASSWORD environment variables must be set",
+    );
   }
+
+  // Authenticate and get data
+  console.log("Authenticating with KoL...");
+  const html = await fetchDnaLab();
+
+  // Process the data
+  console.log("Processing egg data...");
+  await processEggData(html);
+
+  console.log("Update process completed successfully");
 }
 
 // Run the update if this script is executed directly
-if (require.main === module) {
-  runUpdate()
-    .then(() => {
-      process.exit(0);
-    })
-    .catch((error) => {
-      console.error("Update failed:", error);
-      process.exit(1);
-    });
+if (import.meta.url.startsWith("file:")) {
+  const modulePath = url.fileURLToPath(import.meta.url);
+  if (process.argv[1] === modulePath) {
+    runUpdate();
+  }
 }
 
 export { runUpdate };
