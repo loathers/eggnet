@@ -2,9 +2,9 @@
   "name": "eggnet-monitor",
   "version": "1.0.0",
   "description": "Monitoring of the Chest Mimic familiar's DNA Lab contents in the online RPG, Kingdom of Loathing",
-  "main": "dist/server.js",
+  "main": "src/server.ts",
   "scripts": {
-    "start": "node --env-file=.env --import src/server.js",
+    "start": "node --env-file=.env --import tsx src/server.ts",
     "dev": "tsx watch --env-file=.env src/server.ts",
     "update": "node --env-file=.env --import tsx src/update.ts",
     "format": "prettier --write ."
