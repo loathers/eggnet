@@ -156,6 +156,8 @@ result.scotch_list = {
     "Bram the Stoker",
     "pygmy bowler",
     "dense liana",
+    "eye in the darkness",
+    "slithering thing",
   ],
 };
 
