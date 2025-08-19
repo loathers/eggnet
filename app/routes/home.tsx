@@ -2,13 +2,13 @@ import { useMemo } from "react";
 import { createClient } from "data-of-loathing";
 import { useLocalStorage } from "usehooks-ts";
 
-import { Tabbar } from "~/components/Tabbar";
-import { Monster } from "~/components/Monster";
+import { Tabbar } from "~/components/Tabbar.js";
+import { Monster } from "~/components/Monster.js";
 
 import { priorities } from "~/priorities.js";
 import { getEggStatus } from "~/database.js";
 
-import type { Route } from "./+types/home";
+import type { Route } from "./+types/home.js";
 
 const client = createClient();
 

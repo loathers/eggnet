@@ -1,5 +1,5 @@
 import { data } from "react-router";
-import { getEggStatus } from "~/database";
+import { getEggStatus } from "~/database.js";
 
 export async function loader() {
   try {

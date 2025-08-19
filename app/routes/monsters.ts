@@ -1,6 +1,6 @@
 import { data } from "react-router";
-import { prisma } from "~/database";
-import { priorities } from "~/priorities";
+import { prisma } from "~/database.js";
+import { priorities } from "~/priorities.js";
 
 export async function loader() {
   try {
