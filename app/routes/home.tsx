@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { createClient } from "data-of-loathing";
-import { useLocalStorageState } from "ahooks";
+import { useLocalStorage } from "usehooks-ts";
 
 import { Tabbar } from "~/components/Tabbar";
 import { Monster } from "~/components/Monster";
@@ -70,12 +70,13 @@ export function meta({ loaderData: { progress } }: Route.MetaArgs) {
 export default function Home({
   loaderData: { monsters, lastUpdate, progress },
 }: Route.ComponentProps) {
-  const [hideCompleted, setHideCompleted] = useLocalStorageState(
+  const [hideCompleted, setHideCompleted] = useLocalStorage(
     "hideCompleted",
-    { defaultValue: false },
+    false,
+    { initializeWithValue: false },
   );
-  const [sort, setSort] = useLocalStorageState("sort", {
-    defaultValue: "name",
+  const [sort, setSort] = useLocalStorage("sort", "name", {
+    initializeWithValue: false,
   });
 
   const sorted = useMemo(() => {
