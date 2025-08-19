@@ -120,7 +120,7 @@ export default function Home({
             type="checkbox"
             className="setting"
             checked={hideCompleted}
-            onInput={(e) => setHideCompleted(e.currentTarget.checked)}
+            onChange={(e) => setHideCompleted(e.currentTarget.checked)}
           />
           Hide fully donated monsters
         </label>
