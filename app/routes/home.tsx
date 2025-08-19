@@ -88,11 +88,11 @@ export default function Home({
     <div>
       <p className="header">EggNet Monitor</p>
       <p className="last-update">
-        Last update: <time>{lastUpdate.toLocaleString()}</time>
+        Last update: <time suppressHydrationWarning={true}>{lastUpdate.toLocaleString()}</time>
       </p>
       <div className="total-progress">
         <div className="barfill"></div>
-        <p className="eggs-total">{formatProgress(progress)}</p>
+        <p className="eggs-total" suppressHydrationWarning={true}>{formatProgress(progress)}</p>
       </div>
       <Tabbar sort={sort} onSort={setSort} />
       <div className="settings">
