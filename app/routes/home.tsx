@@ -88,11 +88,23 @@ export default function Home({
     <div>
       <p className="header">EggNet Monitor</p>
       <p className="last-update">
-        Last update: <time suppressHydrationWarning={true}>{lastUpdate.toLocaleString(undefined, { timeZoneName: "short" })}</time>
+        Last update:{" "}
+        <time suppressHydrationWarning={true}>
+          {lastUpdate.toLocaleString(undefined, { timeZoneName: "short" })}
+        </time>
       </p>
       <div className="total-progress">
-        <div className="barfill"></div>
-        <p className="eggs-total" suppressHydrationWarning={true}>{formatProgress(progress)}</p>
+        <div
+          className="barfill"
+          style={
+            {
+              "--percentage": `${(progress[0] / progress[1]) * 100}%`,
+            } as React.CSSProperties
+          }
+        ></div>
+        <p className="eggs-total" suppressHydrationWarning={true}>
+          {formatProgress(progress)}
+        </p>
       </div>
       <Tabbar sort={sort} onSort={setSort} />
       <div className="settings">
