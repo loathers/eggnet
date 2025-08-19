@@ -78,7 +78,7 @@ export default function Home({
       .toSorted((a, b) => {
         if (sort === "name") return a.name.localeCompare(b.name);
         if (sort === "id") return a.id - b.id;
-        if (sort === "completion") return a.eggs - b.eggs;
+        if (sort === "completion") return b.eggs - a.eggs;
         if (sort === "ascension") return b.priority - a.priority;
         return 0;
       });
