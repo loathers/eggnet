@@ -10,7 +10,7 @@ body {
   font-family: "Open Sans", sans-serif;
 }
 
-body.dark {
+body {
   --color-bg: #010203;
   --color-text: #ffffff;
   --color-text-secondary: #cccccc;
@@ -28,7 +28,7 @@ body.dark {
   --color-warning-no-transparent: #cd646432;
 }
 
-body.dark img {
+body img {
   filter: invert(1);
   mix-blend-mode: lighten;
 }
@@ -47,10 +47,6 @@ a {
   left: 0;
   right: 0;
   bottom: 0;
-}
-
-body.loaded #loading {
-  display: none;
 }
 
 .outer-loading-circle {
@@ -72,10 +68,6 @@ body.loaded #loading {
   height: 100%;
   border-radius: 50%;
   background-color: var(--color-bg);
-}
-
-body:not(.loaded) #app {
-  display: none;
 }
 
 .button {

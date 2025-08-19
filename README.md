@@ -21,7 +21,7 @@ yarn
 2. Copy the environment template and configure:
 
 ```bash
-cp env.template .env
+cp .env.template .env
 ```
 
 3. Edit `.env` file with your credentials:
