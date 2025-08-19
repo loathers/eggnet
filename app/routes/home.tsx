@@ -4,7 +4,7 @@ import { createClient } from "data-of-loathing";
 import { Tabbar } from "~/components/Tabbar";
 import { Monster } from "~/components/Monster";
 
-import { ranking } from "~/ranking.js";
+import { priorities } from "~/priorities.js";
 import { getEggStatus } from "~/database.js";
 
 import type { Route } from "./+types/home";
@@ -33,7 +33,7 @@ export async function loader() {
         name: m.name,
         image: m.image,
         wiki: m.wiki,
-        priority: ranking[m.name] ?? 0,
+        priority: priorities[m.id] ?? 0,
         eggs: eggs[m.id] ?? 0,
       })) ?? [];
 
