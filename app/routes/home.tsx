@@ -40,24 +40,34 @@ export async function loader() {
   const progress = [
     monsters.reduce((acc, m) => acc + m.eggs, 0),
     monsters.length * 100,
-  ];
+  ] as const;
 
   return { lastUpdate, monsters, progress };
 }
 
+const numberFormat = new Intl.NumberFormat();
+const percentFormat = new Intl.NumberFormat(undefined, {
+  style: "percent",
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 2,
+});
+
+function formatProgress([eggs, totalEggs]: [number, number]) {
+  return `${numberFormat.format(eggs)} / ${numberFormat.format(totalEggs)} eggs donated (${percentFormat.format(eggs / totalEggs)})`;
+}
+
 export function meta({ loaderData: { progress } }: Route.MetaArgs) {
-  const numberFormat = new Intl.NumberFormat();
   return [
     { title: "EggNet Monitor" },
     {
       name: "description",
-      content: `${numberFormat.format(progress[0])} of ${numberFormat.format(progress[1])} eggs collected!`,
+      content: formatProgress(progress),
     },
   ];
 }
 
 export default function Home({
-  loaderData: { monsters, lastUpdate },
+  loaderData: { monsters, lastUpdate, progress },
 }: Route.ComponentProps) {
   const [hideCompleted, setHideCompleted] = useState(false);
   const [sort, setSort] = useState("name");
@@ -75,14 +85,14 @@ export default function Home({
   }, [monsters, sort, hideCompleted]);
 
   return (
-    <div id="app">
+    <div>
       <p className="header">EggNet Monitor</p>
       <p className="last-update">
         Last update: <time>{lastUpdate.toLocaleString()}</time>
       </p>
-      <div className="total-progress" id="total_progress">
+      <div className="total-progress">
         <div className="barfill"></div>
-        <p className="eggs-total"></p>
+        <p className="eggs-total">{formatProgress(progress)}</p>
       </div>
       <Tabbar sort={sort} onSort={setSort} />
       <div className="settings">
@@ -90,7 +100,6 @@ export default function Home({
           <input
             type="checkbox"
             className="setting"
-            id="setting_hide_completed"
             onInput={(e) => setHideCompleted(e.currentTarget.checked)}
           />
           Hide fully donated monsters
