@@ -1,0 +1,9 @@
+.progressbar {
+  width: 100%;
+  text-align: center;
+  background: linear-gradient(
+    to right,
+    var(--color-selected) var(--percentage),
+    rgba(0, 0, 0, 0) var(--percentage)
+  );
+}

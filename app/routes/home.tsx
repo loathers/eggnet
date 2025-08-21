@@ -2,13 +2,18 @@ import { useMemo } from "react";
 import { createClient } from "data-of-loathing";
 import { useLocalStorage } from "usehooks-ts";
 
-import { Tabbar } from "~/components/Tabbar.js";
-import { Monster } from "~/components/Monster.js";
+import type { Route } from "./+types/home.js";
 
 import { priorities } from "~/priorities.js";
 import { getEggStatus } from "~/database.js";
 
-import type { Route } from "./+types/home.js";
+import { Tabbar } from "~/components/Tabbar.js";
+import { Monsters } from "~/components/Monsters.js";
+import { formatProgress, TotalProgress } from "~/components/TotalProgress.js";
+import { LastUpdate } from "~/components/LastUpdate.js";
+import { Footer } from "~/components/Footer.js";
+import { Header } from "~/components/Header.js";
+import { Settings } from "~/components/Settings.js";
 
 const client = createClient();
 
@@ -44,17 +49,6 @@ export async function loader() {
   ] as const;
 
   return { lastUpdate, monsters, progress };
-}
-
-const numberFormat = new Intl.NumberFormat();
-const percentFormat = new Intl.NumberFormat(undefined, {
-  style: "percent",
-  minimumFractionDigits: 0,
-  maximumFractionDigits: 2,
-});
-
-function formatProgress([eggs, totalEggs]: [number, number]) {
-  return `${numberFormat.format(eggs)} / ${numberFormat.format(totalEggs)} eggs donated (${percentFormat.format(eggs / totalEggs)})`;
 }
 
 export function meta({ loaderData: { progress } }: Route.MetaArgs) {
@@ -93,44 +87,16 @@ export default function Home({
 
   return (
     <div>
-      <p className="header">EggNet Monitor</p>
-      <p className="last-update">
-        Last update:{" "}
-        <time suppressHydrationWarning={true}>
-          {lastUpdate.toLocaleString(undefined, { timeZoneName: "short" })}
-        </time>
-      </p>
-      <div className="total-progress">
-        <div
-          className="barfill"
-          style={
-            {
-              "--percentage": `${(progress[0] / progress[1]) * 100}%`,
-            } as React.CSSProperties
-          }
-        ></div>
-        <p className="eggs-total" suppressHydrationWarning={true}>
-          {formatProgress(progress)}
-        </p>
-      </div>
+      <Header />
+      <LastUpdate date={lastUpdate} />
+      <TotalProgress progress={progress} />
       <Tabbar sort={sort} onSort={setSort} />
-      <div className="settings">
-        <label>
-          <input
-            type="checkbox"
-            className="setting"
-            checked={hideCompleted}
-            onChange={(e) => setHideCompleted(e.currentTarget.checked)}
-          />
-          Hide fully donated monsters
-        </label>
-      </div>
-      <div className="monsterlist">
-        {sorted.map((m) => (
-          <Monster key={m.id} monster={m} />
-        ))}
-      </div>
-      <p className="footer">Made by Semenar (#3275442)</p>
+      <Settings
+        hideCompleted={hideCompleted}
+        onChangeHideCompleted={setHideCompleted}
+      />
+      <Monsters monsters={sorted} />
+      <Footer />
     </div>
   );
 }

@@ -1,0 +1,21 @@
+.tabbar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 1fr;
+  gap: 1em;
+  margin-left: 1em;
+  margin-right: 1em;
+}
+
+@media only screen and (max-width: 1200px) {
+  .tabbar {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .tabbar {
+    display: flex;
+    flex-direction: column;
+  }
+}

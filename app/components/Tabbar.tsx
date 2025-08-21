@@ -1,4 +1,5 @@
-import clsx from "clsx";
+import styles from "./Tabbar.module.css";
+import { Button } from "./Button.js";
 
 type Props = {
   sort: string;
@@ -7,31 +8,22 @@ type Props = {
 
 export function Tabbar({ sort, onSort }: Props) {
   return (
-    <div className="tabbar">
-      <div
-        className={clsx("button", { active: sort === "name" })}
-        onClick={() => onSort("name")}
-      >
+    <div className={styles.tabbar}>
+      <Button active={sort === "name"} onClick={() => onSort("name")}>
         Sort by name
-      </div>
-      <div
-        className={clsx("button", { active: sort === "id" })}
-        onClick={() => onSort("id")}
-      >
+      </Button>
+      <Button active={sort === "id"} onClick={() => onSort("id")}>
         Sort by ID
-      </div>
-      <div
-        className={clsx("button", { active: sort === "completion" })}
+      </Button>
+      <Button
+        active={sort === "completion"}
         onClick={() => onSort("completion")}
       >
         Sort by completion
-      </div>
-      <div
-        className={clsx("button", { active: sort === "ascension" })}
-        onClick={() => onSort("ascension")}
-      >
+      </Button>
+      <Button active={sort === "ascension"} onClick={() => onSort("ascension")}>
         Sort by ascension relevance
-      </div>
+      </Button>
     </div>
   );
 }

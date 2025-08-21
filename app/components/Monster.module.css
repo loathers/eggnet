@@ -1,0 +1,35 @@
+.container {
+  background-color: var(--color-warning-yes-transparent);
+  margin: 0.5em;
+  border-radius: 1em;
+  height: 3em;
+  overflow: hidden;
+}
+
+.monster {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  align-items: center;
+
+  padding-left: 1em;
+  padding-right: 1em;
+  gap: 0.5em;
+}
+
+.monsterImage {
+  max-height: 3em;
+  max-width: 3em;
+  flex-basis: 3em;
+  z-index: 1;
+}
+
+.monsterName {
+  z-index: 1;
+}
+
+.monsterBadge {
+  flex-grow: 1;
+  text-align: right;
+  z-index: 1;
+}

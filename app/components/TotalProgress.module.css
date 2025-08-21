@@ -1,0 +1,6 @@
+.container {
+  margin: 1em;
+  gap: 0.5em;
+  height: 1.5em;
+  background-color: var(--color-content-pane);
+}
