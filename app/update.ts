@@ -16,6 +16,32 @@ async function fetchDnaLab(): Promise<string> {
   return await client.fetchText("choice.php?forceoption=0");
 }
 
+async function tellOaf(monsterId: number) {
+  try {
+    const result = await fetch(
+      `https://oaf.loathers.net/webhooks/eggnet?token=${process.env.OAF_TOKEN}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ monsterId }),
+      },
+    );
+    if (!result.ok) {
+      console.warn(
+        "OAF webhook error",
+        result.status,
+        ":",
+        result.statusText,
+        await result.text(),
+      );
+    }
+  } catch (error) {
+    console.warn("OAF webhook error", error);
+  }
+}
+
 async function updateEggStatus(
   monster_id: number,
   eggs_donated: number,
@@ -30,12 +56,30 @@ async function updateEggStatus(
   });
 
   try {
+    // This will fail a uniqueness constraint if we've already seen this number.
+    // That's not a problem and will be caught and ignored.
     await prisma.eggnetMonitorHistory.create({
       data: {
         monster_id,
         eggs_donated,
       },
     });
+
+    // If we got here (i.e. did not hit the uniqueness constraint)
+    // and this is a report of 100, this monster has (probably) just been unlocked!
+    if (eggs_donated === 100) {
+      // If we don't have any history for this monster, don't do anything.
+      // Maybe we are starting from an empty database for some reason
+      if (
+        (await prisma.eggnetMonitorHistory.count({
+          where: { monster_id },
+        })) <= 1
+      )
+        return;
+
+      // Tell OAF about our discovery!
+      await tellOaf(monster_id);
+    }
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
@@ -44,48 +88,6 @@ async function updateEggStatus(
       }
     }
     throw error;
-  }
-
-  if (eggs_donated === 100) {
-    const previous = await prisma.eggnetMonitorHistory.findFirst({
-      where: { monster_id },
-      orderBy: { timestamp: "desc" },
-      skip: 1,
-    });
-
-    if (!previous) {
-      // Technically discovered but highly suspicious, probable data wipe
-      return;
-    }
-
-    if (previous?.eggs_donated === 100) {
-      // Was already complete before this scan
-      return;
-    }
-
-    try {
-      const result = await fetch(
-        `https://oaf.loathers.net/webhooks/eggnet?token=${process.env.OAF_TOKEN}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ monsterId: monster_id }),
-        },
-      );
-      if (!result.ok) {
-        console.warn(
-          "OAF webhook error",
-          result.status,
-          ":",
-          result.statusText,
-          await result.text(),
-        );
-      }
-    } catch (error) {
-      console.warn("OAF webhook error", error);
-    }
   }
 }
 
