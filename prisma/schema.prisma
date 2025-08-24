@@ -26,5 +26,6 @@ model EggnetMonitorHistory {
   eggs_donated Int
   timestamp    DateTime @default(now())
 
+  @@unique([monster_id, eggs_donated])
   @@index([monster_id])
 }

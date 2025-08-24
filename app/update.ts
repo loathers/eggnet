@@ -3,6 +3,7 @@ import { Client } from "kol.js";
 import * as url from "node:url";
 
 import { prisma } from "./database.js";
+import { Prisma } from "@prisma/client-generated";
 
 async function fetchDnaLab(): Promise<string> {
   const client = new Client(
@@ -15,23 +16,35 @@ async function fetchDnaLab(): Promise<string> {
   return await client.fetchText("choice.php?forceoption=0");
 }
 
-async function updateEggStatus(monster_id: number, eggs_donated: number): Promise<void> {
-  await prisma.$transaction([
-    prisma.eggnetMonitor.upsert({
-      where: { monster_id },
-      update: { eggs_donated },
-      create: {
-        monster_id,
-        eggs_donated,
-      },
-    }),
-    prisma.eggnetMonitorHistory.create({
+async function updateEggStatus(
+  monster_id: number,
+  eggs_donated: number,
+): Promise<void> {
+  await prisma.eggnetMonitor.upsert({
+    where: { monster_id },
+    update: { eggs_donated },
+    create: {
+      monster_id,
+      eggs_donated,
+    },
+  });
+
+  try {
+    await prisma.eggnetMonitorHistory.create({
       data: {
         monster_id,
         eggs_donated,
       },
-    }),
-  ]);
+    });
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2002") {
+        // We already have a record of this monster with this egg count
+        return;
+      }
+    }
+    throw error;
+  }
 
   if (eggs_donated === 100) {
     const previous = await prisma.eggnetMonitorHistory.findFirst({

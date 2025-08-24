@@ -21,4 +21,3 @@ export async function getEggStatus(): Promise<{
 
   return { lastUpdate, eggs };
 }
-
