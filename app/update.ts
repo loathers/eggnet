@@ -2,7 +2,7 @@ import { JSDOM } from "jsdom";
 import { Client } from "kol.js";
 import * as url from "node:url";
 
-import { updateEggStatus } from "./database.js";
+import { prisma } from "./database.js";
 
 async function fetchDnaLab(): Promise<string> {
   const client = new Client(
@@ -13,6 +13,67 @@ async function fetchDnaLab(): Promise<string> {
     "place.php?whichplace=town_right&action=townright_dna",
   );
   return await client.fetchText("choice.php?forceoption=0");
+}
+
+async function updateEggStatus(monster_id: number, eggs_donated: number): Promise<void> {
+  await prisma.$transaction([
+    prisma.eggnetMonitor.upsert({
+      where: { monster_id },
+      update: { eggs_donated },
+      create: {
+        monster_id,
+        eggs_donated,
+      },
+    }),
+    prisma.eggnetMonitorHistory.create({
+      data: {
+        monster_id,
+        eggs_donated,
+      },
+    }),
+  ]);
+
+  if (eggs_donated === 100) {
+    const previous = await prisma.eggnetMonitorHistory.findFirst({
+      where: { monster_id },
+      orderBy: { timestamp: "desc" },
+      skip: 1,
+    });
+
+    if (!previous) {
+      // Technically discovered but highly suspicious, probable data wipe
+      return;
+    }
+
+    if (previous?.eggs_donated === 100) {
+      // Was already complete before this scan
+      return;
+    }
+
+    try {
+      const result = await fetch(
+        `https://oaf.loathers.net/webhooks/eggnet?token=${process.env.OAF_TOKEN}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ monsterId: monster_id }),
+        },
+      );
+      if (!result.ok) {
+        console.warn(
+          "OAF webhook error",
+          result.status,
+          ":",
+          result.statusText,
+          await result.text(),
+        );
+      }
+    } catch (error) {
+      console.warn("OAF webhook error", error);
+    }
+  }
 }
 
 async function processEggData(html: string): Promise<void> {
@@ -105,5 +166,3 @@ if (import.meta.url.startsWith("file:")) {
     runUpdate();
   }
 }
-
-export { runUpdate };
