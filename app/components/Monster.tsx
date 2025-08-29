@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
+import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from "recharts";
 import styles from "./Monster.module.css";
 import { ProgressBar } from "./ProgressBar.js";
 
@@ -20,14 +21,27 @@ export type MonsterType = {
   image: string | (string | null)[];
   wiki: string | null;
   priority: number;
+  history: { timestamp: Date; eggs_donated: number }[];
 };
 
 interface MonsterProps {
   monster: MonsterType;
 }
 
+const START = new Date("2024-01-01").getTime();
+
 export const Monster: React.FC<MonsterProps> = ({ monster }) => {
   const image = Array.isArray(monster.image) ? monster.image[0] : monster.image;
+
+  const [isOpen, setIsOpen] = useState(false);
+
+  const history = useMemo(() => {
+    return monster.history.map((entry) => ({
+      ...entry,
+      timestamp: entry.timestamp.getTime(),
+    }));
+  }, [monster.history]);
+
   return (
     <div className={styles.container}>
       <ProgressBar progress={[monster.eggs, 100]}>
@@ -50,7 +64,21 @@ export const Monster: React.FC<MonsterProps> = ({ monster }) => {
           {monster.priority > 0 && (
             <p className={styles.monsterBadge}>{badges[monster.priority]}</p>
           )}
+          <button onClick={() => setIsOpen((o) => !o)}>
+            {isOpen ? "🔼" : "🔽"}
+          </button>
         </div>
+        {isOpen && (
+          <div style={{ padding: "0 16px" }}>
+            <ResponsiveContainer width="100%" height={100}>
+              <LineChart data={history}>
+                <YAxis domain={[0, 100]} />
+                <XAxis dataKey="timestamp" domain={[START, "dataMax"]} />
+                <Line type="linear" dataKey="eggs_donated" stroke="#8884d8" />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        )}
       </ProgressBar>
     </div>
   );

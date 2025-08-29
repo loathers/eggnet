@@ -18,6 +18,7 @@ model EggnetMonitor {
   monster_id   Int      @id
   eggs_donated Int
   last_update  DateTime @updatedAt
+  history      EggnetMonitorHistory[]
 }
 
 model EggnetMonitorHistory {
@@ -25,6 +26,7 @@ model EggnetMonitorHistory {
   monster_id   Int
   eggs_donated Int
   timestamp    DateTime @default(now())
+  monster      EggnetMonitor @relation(fields: [monster_id], references: [monster_id])
 
   @@unique([monster_id, eggs_donated])
   @@index([monster_id])

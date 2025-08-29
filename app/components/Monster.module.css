@@ -2,7 +2,6 @@
   background-color: var(--color-warning-yes-transparent);
   margin: 0.5em;
   border-radius: 1em;
-  height: 3em;
   overflow: hidden;
 }
 
@@ -22,15 +21,14 @@
   max-height: 3em;
   max-width: 3em;
   flex-basis: 3em;
-  z-index: 1;
 }
 
 .monsterName {
-  z-index: 1;
+  text-align: left;
+  flex-grow: 1;
 }
 
 .monsterBadge {
   flex-grow: 1;
   text-align: right;
-  z-index: 1;
 }

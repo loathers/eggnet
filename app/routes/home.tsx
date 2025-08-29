@@ -5,7 +5,7 @@ import { useLocalStorage } from "usehooks-ts";
 import type { Route } from "./+types/home.js";
 
 import { priorities } from "~/priorities.js";
-import { getEggStatus } from "~/database.js";
+import { getLastUpdate, prisma } from "~/database.js";
 
 import { Tabbar } from "~/components/Tabbar.js";
 import { Monsters } from "~/components/Monsters.js";
@@ -18,7 +18,28 @@ import { Settings } from "~/components/Settings.js";
 const client = createClient();
 
 export async function loader() {
-  const { lastUpdate, eggs } = await getEggStatus();
+  const lastUpdate = await getLastUpdate();
+
+  const monsterEggs = await prisma.eggnetMonitor.findMany({
+    select: {
+      eggs_donated: true,
+      monster_id: true,
+      history: {
+        select: {
+          timestamp: true,
+          eggs_donated: true,
+        },
+      },
+    },
+  });
+
+  const monsterEggsById = monsterEggs.reduce<
+    Record<number, (typeof monsterEggs)[0]>
+  >((acc, curr) => {
+    acc[curr.monster_id] = curr;
+    return acc;
+  }, {});
+
   const { allMonsters } = await client.query({
     allMonsters: {
       nodes: {
@@ -33,14 +54,15 @@ export async function loader() {
   const monsters =
     allMonsters?.nodes
       .filter((n) => n !== null)
-      .filter((m) => eggs[m.id] !== undefined)
+      .filter((m) => monsterEggsById[m.id] !== undefined)
       .map((m) => ({
         id: m.id,
         name: m.name,
         image: m.image,
         wiki: m.wiki,
         priority: priorities[m.id] ?? 0,
-        eggs: eggs[m.id] ?? 0,
+        eggs: monsterEggsById[m.id]?.eggs_donated ?? 0,
+        history: monsterEggsById[m.id]?.history ?? [],
       })) ?? [];
 
   const progress = [
