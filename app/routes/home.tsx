@@ -29,6 +29,9 @@ export async function loader() {
           timestamp: true,
           eggs_donated: true,
         },
+        orderBy: {
+          timestamp: "asc",
+        },
       },
     },
   });
