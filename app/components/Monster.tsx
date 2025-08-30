@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from "recharts";
 import styles from "./Monster.module.css";
 import { ProgressBar } from "./ProgressBar.js";
+import { clsx } from "clsx";
 
 const IMAGES_SERVER = "https://d2uyhvukfffg5a.cloudfront.net";
 const WIKI_WEBPAGE = "https://kol.coldfront.net/thekolwiki/index.php";
@@ -29,6 +30,7 @@ interface MonsterProps {
 }
 
 const START = new Date("2024-01-01").getTime();
+const NOW = new Date().getTime();
 
 export const Monster: React.FC<MonsterProps> = ({ monster }) => {
   const image = Array.isArray(monster.image) ? monster.image[0] : monster.image;
@@ -36,10 +38,17 @@ export const Monster: React.FC<MonsterProps> = ({ monster }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const history = useMemo(() => {
-    return monster.history.map((entry) => ({
-      ...entry,
-      timestamp: entry.timestamp.getTime(),
-    }));
+    return [
+      { timestamp: START, eggs_donated: 0 },
+      ...monster.history.map((entry) => ({
+        ...entry,
+        timestamp: entry.timestamp.getTime(),
+      })),
+      {
+        timestamp: NOW,
+        eggs_donated: monster.history.at(-1)?.eggs_donated ?? 0,
+      },
+    ];
   }, [monster.history]);
 
   return (
@@ -64,21 +73,26 @@ export const Monster: React.FC<MonsterProps> = ({ monster }) => {
           {monster.priority > 0 && (
             <p className={styles.monsterBadge}>{badges[monster.priority]}</p>
           )}
-          <button onClick={() => setIsOpen((o) => !o)}>
-            {isOpen ? "🔼" : "🔽"}
+          <button
+            className={styles.expandButton}
+            onClick={() => setIsOpen((o) => !o)}
+          >
+            📈 {isOpen ? "🔼" : "🔽"}
           </button>
         </div>
-        {isOpen && (
-          <div style={{ padding: "0 16px" }}>
+        <div
+          className={clsx(styles.chartContainer, { [styles.expanded]: isOpen })}
+        >
+          {isOpen && (
             <ResponsiveContainer width="100%" height={100}>
               <LineChart data={history}>
-                <YAxis domain={[0, 100]} />
-                <XAxis dataKey="timestamp" domain={[START, "dataMax"]} />
+                <YAxis hide domain={[0, 100]} />
+                <XAxis hide dataKey="timestamp" />
                 <Line type="linear" dataKey="eggs_donated" stroke="#8884d8" />
               </LineChart>
             </ResponsiveContainer>
-          </div>
-        )}
+          )}
+        </div>
       </ProgressBar>
     </div>
   );
