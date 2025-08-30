@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from "recharts";
+import { History } from "./History.js";
 import styles from "./Monster.module.css";
 import { ProgressBar } from "./ProgressBar.js";
 import { clsx } from "clsx";
@@ -83,15 +83,7 @@ export const Monster: React.FC<MonsterProps> = ({ monster }) => {
         <div
           className={clsx(styles.chartContainer, { [styles.expanded]: isOpen })}
         >
-          {isOpen && (
-            <ResponsiveContainer width="100%" height={100}>
-              <LineChart data={history}>
-                <YAxis hide domain={[0, 100]} />
-                <XAxis hide dataKey="timestamp" />
-                <Line type="linear" dataKey="eggs_donated" stroke="#8884d8" />
-              </LineChart>
-            </ResponsiveContainer>
-          )}
+          {isOpen && <History history={history} />}
         </div>
       </ProgressBar>
     </div>
