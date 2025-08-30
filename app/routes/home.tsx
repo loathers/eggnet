@@ -73,7 +73,42 @@ export async function loader() {
     monsters.length * 100,
   ] as const;
 
-  return { lastUpdate, monsters, progress };
+  const history = await prisma.$queryRaw<
+    {
+      eggs_donated: number;
+      timestamp: Date;
+    }[]
+  >`
+  WITH ranked AS (
+    SELECT
+      id,
+      monster_id,
+      eggs_donated,
+      timestamp,
+      eggs_donated
+        - COALESCE(
+            LAG(eggs_donated) OVER (
+              PARTITION BY monster_id
+              ORDER BY timestamp ASC, id ASC
+            ),
+            0
+          ) AS delta
+    FROM "EggnetMonitorHistory"
+  )
+  SELECT
+    timestamp,
+    CAST(
+      SUM(delta) OVER (
+        ORDER BY timestamp ASC, id ASC
+        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+      )
+      AS DOUBLE PRECISION
+    ) AS eggs_donated
+  FROM ranked
+  ORDER BY timestamp ASC, id ASC;
+  `;
+
+  return { lastUpdate, monsters, progress, history };
 }
 
 export function meta({ loaderData: { progress } }: Route.MetaArgs) {
@@ -87,7 +122,7 @@ export function meta({ loaderData: { progress } }: Route.MetaArgs) {
 }
 
 export default function Home({
-  loaderData: { monsters, lastUpdate, progress },
+  loaderData: { monsters, lastUpdate, progress, history },
 }: Route.ComponentProps) {
   const [hideCompleted, setHideCompleted] = useLocalStorage(
     "hideCompleted",
@@ -114,7 +149,7 @@ export default function Home({
     <div>
       <Header />
       <LastUpdate date={lastUpdate} />
-      <TotalProgress progress={progress} />
+      <TotalProgress history={history} progress={progress} />
       <Tabbar sort={sort} onSort={setSort} />
       <Settings
         hideCompleted={hideCompleted}

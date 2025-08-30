@@ -13,10 +13,7 @@ import { useMemo } from "react";
 
 const START = new Date("2024-01-01").getTime();
 const NOW = new Date().getTime();
-
-type Props = {
-  history: { timestamp: Date; eggs_donated: number }[];
-};
+const numberFormatter = new Intl.NumberFormat();
 
 function DonationTooltip({
   active,
@@ -29,7 +26,7 @@ function DonationTooltip({
 
   const data = payload?.[0]?.payload;
   const content = isVisible
-    ? `${data.eggs_donated} @ ${new Date(data.timestamp).toLocaleString(undefined, { timeZoneName: "short" })}`
+    ? `${numberFormatter.format(data.eggs_donated)} @ ${new Date(data.timestamp).toLocaleString(undefined, { timeZoneName: "short" })}`
     : null;
 
   return (
@@ -39,7 +36,12 @@ function DonationTooltip({
   );
 }
 
-export function History({ history }: Props) {
+type Props = {
+  history: { timestamp: Date; eggs_donated: number }[];
+  max?: number;
+};
+
+export function History({ history, max = 100 }: Props) {
   const data = useMemo(() => {
     return [
       { timestamp: START, eggs_donated: 0 },
@@ -58,9 +60,14 @@ export function History({ history }: Props) {
     <ResponsiveContainer width="100%" height={100}>
       <LineChart data={data}>
         <Tooltip content={<DonationTooltip />} />
-        <YAxis hide domain={[0, 100]} />
-        <XAxis type="number" hide domain={[START, NOW]} dataKey="timestamp" />
-        <Line type="stepAfter" dataKey="eggs_donated" stroke="#8884d8" />
+        <YAxis hide domain={[0, max]} />
+        <XAxis hide type="number" domain={[START, NOW]} dataKey="timestamp" />
+        <Line
+          type="stepAfter"
+          dataKey="eggs_donated"
+          stroke="#8884d8"
+          dot={false}
+        />
       </LineChart>
     </ResponsiveContainer>
   );

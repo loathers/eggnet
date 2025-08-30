@@ -7,6 +7,7 @@ type Props = React.PropsWithChildren<{
 export function ProgressBar({ progress, children }: Props) {
   return (
     <div
+      suppressHydrationWarning={true}
       className={styles.progressbar}
       style={
         {
