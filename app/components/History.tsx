@@ -21,10 +21,6 @@ function DonationTooltip({
   content?: any;
 }) {
   const isVisible = active && payload && payload.length;
-  if (isVisible) {
-    console.log(payload);
-  }
-
   const data = payload?.[0]?.payload;
 
   return (
