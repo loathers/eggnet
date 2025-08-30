@@ -7,6 +7,9 @@ import {
   YAxis,
 } from "recharts";
 
+import styles from "./History.module.css";
+import { clsx } from "clsx";
+
 type Props = {
   history: { timestamp: number; eggs_donated: number }[];
 };
@@ -14,25 +17,20 @@ type Props = {
 function DonationTooltip({
   active,
   payload,
-  content,
 }: {
   active?: boolean;
   payload?: any[];
-  content?: any;
 }) {
   const isVisible = active && payload && payload.length;
+
   const data = payload?.[0]?.payload;
+  const content = isVisible
+    ? `${data.eggs_donated} @ ${new Date(data.timestamp).toLocaleString(undefined, { timeZoneName: "short" })}`
+    : null;
 
   return (
-    <div
-      className="custom-tooltip"
-      style={{ visibility: isVisible ? "visible" : "hidden" }}
-    >
-      {isVisible && (
-        <>
-          <p>{`${data.eggs_donated} @ ${new Date(data.timestamp).toLocaleString(undefined, { timeZoneName: "short" })}`}</p>
-        </>
-      )}
+    <div className={clsx(styles.tooltip, { [styles.visible]: isVisible })}>
+      {content}
     </div>
   );
 }
