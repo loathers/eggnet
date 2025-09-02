@@ -2552,6 +2552,7 @@ __metadata:
     "@types/react-is": "npm:^19.0.0"
     clsx: "npm:^2.1.1"
     data-of-loathing: "npm:^2.2.0"
+    entities: "npm:^6.0.1"
     express: "npm:^5.1.0"
     isbot: "npm:^5.1.30"
     jsdom: "npm:^26.1.0"
@@ -2630,7 +2631,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"entities@npm:^6.0.0":
+"entities@npm:^6.0.0, entities@npm:^6.0.1":
   version: 6.0.1
   resolution: "entities@npm:6.0.1"
   checksum: 10c0/ed836ddac5acb34341094eb495185d527bd70e8632b6c0d59548cbfa23defdbae70b96f9a405c82904efa421230b5b3fd2283752447d737beffd3f3e6ee74414

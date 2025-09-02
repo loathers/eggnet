@@ -1,8 +1,10 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
+import { clsx } from "clsx";
+import { decode } from "entities";
+
 import { History } from "./History.js";
 import styles from "./Monster.module.css";
 import { ProgressBar } from "./ProgressBar.js";
-import { clsx } from "clsx";
 
 const IMAGES_SERVER = "https://d2uyhvukfffg5a.cloudfront.net";
 const WIKI_WEBPAGE = "https://kol.coldfront.net/thekolwiki/index.php";
@@ -34,6 +36,8 @@ export const Monster: React.FC<MonsterProps> = ({ monster }) => {
 
   const [isOpen, setIsOpen] = useState(false);
 
+  const name = decode(monster.name);
+
   return (
     <div className={styles.container}>
       <ProgressBar progress={[monster.eggs, 100]}>
@@ -41,15 +45,15 @@ export const Monster: React.FC<MonsterProps> = ({ monster }) => {
           <img
             className={styles.monsterImage}
             src={`${IMAGES_SERVER}/adventureimages/${image}`}
-            alt={monster.name}
+            alt={name}
           />
           <p className={styles.monsterName}>
             <a
-              href={`${WIKI_WEBPAGE}/${monster.wiki ?? monster.name.replace(/\s/g, "_")}`}
+              href={`${WIKI_WEBPAGE}/${monster.wiki ?? name.replace(/\s/g, "_")}`}
               target="_blank"
               rel="noopener noreferrer"
             >
-              {monster.name}
+              {name}
             </a>
             {monster.eggs === 100 ? "" : ` (${monster.eggs}/100 eggs)`}
           </p>
