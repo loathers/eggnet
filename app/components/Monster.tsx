@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { clsx } from "clsx";
-import { decode } from "entities";
+import { decodeHTML } from "entities";
 
 import { History } from "./History.js";
 import styles from "./Monster.module.css";
@@ -36,7 +36,7 @@ export const Monster: React.FC<MonsterProps> = ({ monster }) => {
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const name = decode(monster.name);
+  const name = decodeHTML(monster.name);
 
   return (
     <div className={styles.container}>

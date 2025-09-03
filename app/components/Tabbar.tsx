@@ -1,9 +1,11 @@
 import styles from "./Tabbar.module.css";
 import { Button } from "./Button.js";
 
+export type Sort = "name" | "id" | "completion" | "ascension";
+
 type Props = {
-  sort: string;
-  onSort: (tab: string) => void;
+  sort: Sort;
+  onSort: (tab: Sort) => void;
 };
 
 export function Tabbar({ sort, onSort }: Props) {

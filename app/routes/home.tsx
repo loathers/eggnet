@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { createClient } from "data-of-loathing";
 import { useLocalStorage } from "usehooks-ts";
 
@@ -7,7 +6,7 @@ import type { Route } from "./+types/home.js";
 import { priorities } from "~/priorities.js";
 import { getLastUpdate, prisma } from "~/database.js";
 
-import { Tabbar } from "~/components/Tabbar.js";
+import { type Sort, Tabbar } from "~/components/Tabbar.js";
 import { Monsters } from "~/components/Monsters.js";
 import { formatProgress, TotalProgress } from "~/components/TotalProgress.js";
 import { LastUpdate } from "~/components/LastUpdate.js";
@@ -129,21 +128,9 @@ export default function Home({
     false,
     { initializeWithValue: false },
   );
-  const [sort, setSort] = useLocalStorage("sort", "name", {
+  const [sort, setSort] = useLocalStorage<Sort>("sort", "name", {
     initializeWithValue: false,
   });
-
-  const sorted = useMemo(() => {
-    return monsters
-      .filter((m) => !hideCompleted || m.eggs < 100)
-      .toSorted((a, b) => {
-        if (sort === "name") return a.name.localeCompare(b.name);
-        if (sort === "id") return a.id - b.id;
-        if (sort === "completion") return b.eggs - a.eggs;
-        if (sort === "ascension") return b.priority - a.priority;
-        return 0;
-      });
-  }, [monsters, sort, hideCompleted]);
 
   return (
     <div>
@@ -155,7 +142,7 @@ export default function Home({
         hideCompleted={hideCompleted}
         onChangeHideCompleted={setHideCompleted}
       />
-      <Monsters monsters={sorted} />
+      <Monsters monsters={monsters} hideCompleted={hideCompleted} sort={sort} />
       <Footer />
     </div>
   );
