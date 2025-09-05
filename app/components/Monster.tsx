@@ -7,7 +7,7 @@ import styles from "./Monster.module.css";
 import { ProgressBar } from "./ProgressBar.js";
 
 const IMAGES_SERVER = "https://d2uyhvukfffg5a.cloudfront.net";
-const WIKI_WEBPAGE = "https://kol.coldfront.net/thekolwiki/index.php";
+const WIKI_WEBPAGE = "https://wiki.kingdomofloathing.com";
 
 const badges = [
   "default",
