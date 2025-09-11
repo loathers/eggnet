@@ -76,4 +76,6 @@ export const priorities: Record<string, number> = {
   1426: 1, // dense liana
   1373: 1, // eye in the darkness
   1375: 1, // slithering thing
+  1932: 1, // ungulith
+  2232: 1, // high-altitude pterodactyl
 };
