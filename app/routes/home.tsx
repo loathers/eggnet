@@ -49,6 +49,7 @@ export async function loader() {
         id: true,
         image: true,
         wiki: true,
+        nocopy: true,
       },
     },
   });
@@ -62,14 +63,18 @@ export async function loader() {
         name: m.name,
         image: m.image,
         wiki: m.wiki,
+        nocopy: m.nocopy,
         priority: priorities[m.id] ?? 0,
         eggs: monsterEggsById[m.id]?.eggs_donated ?? 0,
         history: monsterEggsById[m.id]?.history ?? [],
       })) ?? [];
 
+  // Ignore nocopy monsters for progress calculation (e.g. embering hulk and infinite meat bug)
+  const progressMonsters = monsters.filter((m) => !m.nocopy);
+
   const progress = [
-    monsters.reduce((acc, m) => acc + m.eggs, 0),
-    monsters.length * 100,
+    progressMonsters.reduce((acc, m) => acc + m.eggs, 0),
+    progressMonsters.length * 100,
   ] as const;
 
   const history = await prisma.$queryRaw<
