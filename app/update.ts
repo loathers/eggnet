@@ -17,6 +17,7 @@ async function fetchDnaLab(): Promise<string> {
 }
 
 async function tellOaf(monsterId: number) {
+  if (!process.env.OAF_TOKEN) return;
   try {
     const result = await fetch(
       `https://oaf.loathers.net/webhooks/eggnet?token=${process.env.OAF_TOKEN}`,
