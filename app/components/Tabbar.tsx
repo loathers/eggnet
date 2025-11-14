@@ -6,9 +6,10 @@ export type Sort = "name" | "id" | "completion" | "ascension";
 type Props = {
   sort: Sort;
   onSort: (tab: Sort) => void;
+  showAscensionRelevant: boolean;
 };
 
-export function Tabbar({ sort, onSort }: Props) {
+export function Tabbar({ sort, onSort, showAscensionRelevant }: Props) {
   return (
     <div className={styles.tabbar}>
       <Button active={sort === "name"} onClick={() => onSort("name")}>
@@ -23,9 +24,14 @@ export function Tabbar({ sort, onSort }: Props) {
       >
         Sort by completion
       </Button>
-      <Button active={sort === "ascension"} onClick={() => onSort("ascension")}>
-        Sort by ascension relevance
-      </Button>
+      {showAscensionRelevant && (
+        <Button
+          active={sort === "ascension"}
+          onClick={() => onSort("ascension")}
+        >
+          Sort by ascension relevance
+        </Button>
+      )}
     </div>
   );
 }

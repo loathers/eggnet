@@ -13,6 +13,7 @@ import { LastUpdate } from "~/components/LastUpdate.js";
 import { Footer } from "~/components/Footer.js";
 import { Header } from "~/components/Header.js";
 import { Settings } from "~/components/Settings.js";
+import { useMemo } from "react";
 
 const client = createClient();
 
@@ -137,12 +138,21 @@ export default function Home({
     initializeWithValue: false,
   });
 
+  const showAscensionRelevant = useMemo(
+    () => monsters.filter((m) => m.priority > 0 && m.eggs < 100).length > 0,
+    [monsters],
+  );
+
   return (
     <div>
       <Header />
       <LastUpdate date={lastUpdate} />
       <TotalProgress history={history} progress={progress} />
-      <Tabbar sort={sort} onSort={setSort} />
+      <Tabbar
+        sort={sort}
+        onSort={setSort}
+        showAscensionRelevant={showAscensionRelevant}
+      />
       <Settings
         hideCompleted={hideCompleted}
         onChangeHideCompleted={setHideCompleted}
