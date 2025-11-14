@@ -24,6 +24,7 @@ export type MonsterType = {
   image: string | (string | null)[];
   wiki: string | null;
   priority: number;
+  nocopy: boolean;
   history: { timestamp: Date; eggs_donated: number }[];
 };
 
@@ -39,7 +40,10 @@ export const Monster: React.FC<MonsterProps> = ({ monster }) => {
   const name = decodeHTML(monster.name);
 
   return (
-    <div className={styles.container}>
+    <div
+      className={styles.container}
+      style={{ opacity: monster.nocopy ? 0.5 : 1 } as React.CSSProperties}
+    >
       <ProgressBar progress={[monster.eggs, 100]}>
         <div className={styles.monster}>
           <img
@@ -57,6 +61,14 @@ export const Monster: React.FC<MonsterProps> = ({ monster }) => {
             </a>
             {monster.eggs === 100 ? "" : ` (${monster.eggs}/100 eggs)`}
           </p>
+          {monster.nocopy && (
+            <p
+              className={styles.monsterBadge}
+              title="Was probably added through a bug or as a joke"
+            >
+              not copyable
+            </p>
+          )}
           {monster.priority > 0 && (
             <p className={styles.monsterBadge}>{badges[monster.priority]}</p>
           )}
