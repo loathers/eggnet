@@ -9,7 +9,7 @@
     "dev": "react-router dev",
     "start": "react-router-serve ./build/server/index.js",
     "typecheck": "react-router typegen && tsc",
-    "update": "node --env-file=.env --import tsx app/update.ts",
+    "update": "node --env-file-if-exists=.env --import tsx app/update.ts",
     "format": "prettier --write ."
   },
   "dependencies": {
