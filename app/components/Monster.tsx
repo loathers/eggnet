@@ -41,8 +41,7 @@ export const Monster: React.FC<MonsterProps> = ({ monster }) => {
 
   return (
     <div
-      className={styles.container}
-      style={{ opacity: monster.nocopy ? 0.5 : 1 } as React.CSSProperties}
+      className={clsx(styles.container, { [styles.nocopy]: monster.nocopy })}
     >
       <ProgressBar progress={[monster.eggs, 100]}>
         <div className={styles.monster}>

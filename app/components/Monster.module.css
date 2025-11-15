@@ -5,6 +5,10 @@
   overflow: hidden;
 }
 
+.nocopy {
+  opacity: 0.5;
+}
+
 .monster {
   display: flex;
   flex-direction: row;
