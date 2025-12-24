@@ -13,6 +13,7 @@
     "format": "prettier --write ."
   },
   "dependencies": {
+    "@fireworks-js/react": "^2.10.8",
     "@prisma/client": "^6.19.0",
     "@react-router/node": "^7.9.6",
     "@react-router/serve": "^7.9.6",

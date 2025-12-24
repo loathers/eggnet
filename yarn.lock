@@ -788,6 +788,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fireworks-js/react@npm:^2.10.8":
+  version: 2.10.8
+  resolution: "@fireworks-js/react@npm:2.10.8"
+  dependencies:
+    fireworks-js: "npm:2.10.8"
+  peerDependencies:
+    "@types/react": ">=16.8.0"
+    react: ">=16.8.0"
+  checksum: 10c0/c97e806362a9d843c56861477ca6f9107ed6720ced27dcabc26c8e62c583f044bd1993e7c794fd37fd7e2136ede1e9524ae1a677b5f9e48eeeb00a884f3791fd
+  languageName: node
+  linkType: hard
+
 "@isaacs/cliui@npm:^8.0.2":
   version: 8.0.2
   resolution: "@isaacs/cliui@npm:8.0.2"
@@ -2600,6 +2612,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "eggnet-monitor@workspace:."
   dependencies:
+    "@fireworks-js/react": "npm:^2.10.8"
     "@prisma/client": "npm:^6.19.0"
     "@react-router/dev": "npm:^7.9.6"
     "@react-router/node": "npm:^7.9.6"
@@ -3138,6 +3151,13 @@ __metadata:
     parseurl: "npm:^1.3.3"
     statuses: "npm:^2.0.1"
   checksum: 10c0/da0bbca6d03873472ee890564eb2183f4ed377f25f3628a0fc9d16dac40bed7b150a0d82ebb77356e4c6d97d2796ad2dba22948b951dddee2c8768b0d1b9fb1f
+  languageName: node
+  linkType: hard
+
+"fireworks-js@npm:2.10.8":
+  version: 2.10.8
+  resolution: "fireworks-js@npm:2.10.8"
+  checksum: 10c0/58c2536fe89d448d809491fb1803fdcb9cb66e12c9e93dcdf8516ef2da04a663d6c1439a83cf65e4881da2fa12b28908432a83e30faf4f02724e1697a1317f0e
   languageName: node
   linkType: hard
 

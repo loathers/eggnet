@@ -1,5 +1,8 @@
 import { createClient } from "data-of-loathing";
 import { useLocalStorage } from "usehooks-ts";
+import { useEffect, useRef } from "react";
+import { Fireworks } from "@fireworks-js/react";
+import type { FireworksHandlers } from "@fireworks-js/react";
 
 import type { Route } from "./+types/home.js";
 
@@ -129,6 +132,8 @@ export function meta({ loaderData: { progress } }: Route.MetaArgs) {
 export default function Home({
   loaderData: { monsters, lastUpdate, progress, history },
 }: Route.ComponentProps) {
+  const ref = useRef<FireworksHandlers>(null);
+
   const [hideCompleted, setHideCompleted] = useLocalStorage(
     "hideCompleted",
     false,
@@ -142,6 +147,15 @@ export default function Home({
     () => monsters.filter((m) => m.priority > 0 && m.eggs < 100).length > 0,
     [monsters],
   );
+
+  useEffect(() => {
+    if (!ref.current) return;
+    if (progress[0] === progress[1]) {
+      ref.current.start();
+    } else {
+      ref.current.stop();
+    }
+  }, [progress, ref.current]);
 
   return (
     <div>
@@ -158,6 +172,18 @@ export default function Home({
         onChangeHideCompleted={setHideCompleted}
       />
       <Monsters monsters={monsters} hideCompleted={hideCompleted} sort={sort} />
+      <Fireworks
+        ref={ref}
+        options={{ opacity: 0.5 }}
+        style={{
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          position: "fixed",
+          pointerEvents: "none",
+        }}
+      />
       <Footer />
     </div>
   );
