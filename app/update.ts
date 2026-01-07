@@ -1,4 +1,4 @@
-import { JSDOM } from "jsdom";
+import { parse } from "node-html-parser";
 import { Client } from "kol.js";
 import * as url from "node:url";
 
@@ -84,21 +84,18 @@ async function updateEggStatus(
 
 async function processEggData(html: string): Promise<void> {
   try {
-    const dom = new JSDOM(html);
-    const document = dom.window.document;
+    const root = parse(html);
 
-    const forms = document.getElementsByTagName("form");
-    if (forms.length === 0) {
+    const form = root.querySelector("form");
+    if (!form) {
       throw new Error("No forms found in the page");
     }
 
-    const form = forms[0];
-    const options = form.getElementsByTagName("option");
+    const options = form.querySelectorAll("option");
 
     const updates: Array<{ monster_id: number; eggs_donated: number }> = [];
 
-    for (let i = 0; i < options.length; i++) {
-      const option = options[i];
+    for (const option of options) {
       const value = option.getAttribute("value");
 
       if (!value || value === "") {
@@ -107,27 +104,39 @@ async function processEggData(html: string): Promise<void> {
 
       const monster_id = parseInt(value, 10);
       if (isNaN(monster_id)) {
+        console.error(`Invalid monster id value (${value}), skipping`);
         continue;
       }
 
       const isCompleted = !option.hasAttribute("disabled");
-      let eggs_donated = 100;
 
-      if (!isCompleted) {
-        const optionText = option.textContent || "";
-        const lastBracketPos = optionText.lastIndexOf("(");
-
-        if (lastBracketPos !== -1) {
-          const bracketContent = optionText.substring(lastBracketPos);
-          const numberMatch = bracketContent.match(/(\d+)/);
-          if (numberMatch) {
-            const remainingEggs = parseInt(numberMatch[1], 10);
-            eggs_donated = 100 - remainingEggs;
-          }
-        }
+      if (isCompleted) {
+        updates.push({ monster_id, eggs_donated: 100 });
+        continue;
       }
 
-      updates.push({ monster_id, eggs_donated });
+      const optionText = option.textContent || "";
+      const lastBracketPos = optionText.lastIndexOf("(");
+
+      if (lastBracketPos < 0) {
+        console.error(
+          `Monster ${monster_id} is formatted weirdly (no bracket), skipping`,
+        );
+        continue;
+      }
+
+      const bracketContent = optionText.substring(lastBracketPos);
+      const numberMatch = bracketContent.match(/(\d+)/);
+
+      if (!numberMatch) {
+        console.error(
+          `Monster ${monster_id} is formatted weirdly (no number), skipping`,
+        );
+        continue;
+      }
+
+      const remainingEggs = parseInt(numberMatch[1], 10);
+      updates.push({ monster_id, eggs_donated: 100 - remainingEggs });
     }
 
     console.log(`Found ${updates.length} monsters to update`);
