@@ -53,3 +53,8 @@
   padding: 8px 16px 16px 16px;
   height: 100px;
 }
+
+.loading {
+  text-align: center;
+  padding: 1rem;
+}

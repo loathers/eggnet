@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useFetcher } from "react-router";
 import { clsx } from "clsx";
 import { decodeHTML } from "entities";
 
@@ -25,7 +26,6 @@ export type MonsterType = {
   wiki: string | null;
   priority: number;
   nocopy: boolean;
-  history: { timestamp: Date; eggs_donated: number }[];
 };
 
 interface MonsterProps {
@@ -36,6 +36,18 @@ export const Monster: React.FC<MonsterProps> = ({ monster }) => {
   const image = Array.isArray(monster.image) ? monster.image[0] : monster.image;
 
   const [isOpen, setIsOpen] = useState(false);
+  const fetcher = useFetcher<{ timestamp: string; eggs_donated: number }[]>();
+
+  useEffect(() => {
+    if (isOpen && fetcher.state === "idle" && !fetcher.data) {
+      fetcher.load(`/monster-history/${monster.id}`);
+    }
+  }, [isOpen, fetcher, monster.id]);
+
+  const history = fetcher.data?.map((d) => ({
+    timestamp: new Date(d.timestamp),
+    eggs_donated: d.eggs_donated,
+  }));
 
   const name = decodeHTML(monster.name);
 
@@ -81,7 +93,10 @@ export const Monster: React.FC<MonsterProps> = ({ monster }) => {
         <div
           className={clsx(styles.chartContainer, { [styles.expanded]: isOpen })}
         >
-          {isOpen && <History history={monster.history} />}
+          {isOpen && fetcher.state === "loading" && (
+            <p className={styles.loading}>Loading...</p>
+          )}
+          {isOpen && history && <History history={history} />}
         </div>
       </ProgressBar>
     </div>
