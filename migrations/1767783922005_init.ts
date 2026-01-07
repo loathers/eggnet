@@ -7,9 +7,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .ifNotExists()
     .addColumn("monster_id", "integer", (col) => col.primaryKey())
     .addColumn("eggs_donated", "integer", (col) => col.notNull())
-    .addColumn("last_update", "timestamptz", (col) =>
-      col.notNull().defaultTo(sql`now()`),
-    )
+    .addColumn("last_update", "timestamptz", (col) => col.notNull())
     .execute();
 
   // Create EggnetMonitorHistory table
