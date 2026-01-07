@@ -1,10 +1,10 @@
 import { data } from "react-router";
-import { prisma } from "~/database.js";
+import { db } from "~/database.js";
 import { priorities } from "~/priorities.js";
 
 export async function loader() {
   try {
-    const monsters = await prisma.eggnetMonitor.findMany({});
+    const monsters = await db.selectFrom("EggnetMonitor").selectAll().execute();
     return monsters.map((m) => ({
       id: m.monster_id,
       eggs: m.eggs_donated,

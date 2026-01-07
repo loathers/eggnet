@@ -7,7 +7,7 @@ import type { FireworksHandlers } from "@fireworks-js/react";
 import type { Route } from "./+types/home.js";
 
 import { priorities } from "~/priorities.js";
-import { getLastUpdate, prisma } from "~/database.js";
+import { db, getLastUpdate } from "~/database.js";
 
 import { type Sort, Tabbar } from "~/components/Tabbar.js";
 import { Monsters } from "~/components/Monsters.js";
@@ -23,28 +23,19 @@ const client = createClient();
 export async function loader() {
   const lastUpdate = await getLastUpdate();
 
-  const monsterEggs = await prisma.eggnetMonitor.findMany({
-    select: {
-      eggs_donated: true,
-      monster_id: true,
-      history: {
-        select: {
-          timestamp: true,
-          eggs_donated: true,
-        },
-        orderBy: {
-          timestamp: "asc",
-        },
-      },
-    },
-  });
+  const data = await db
+    .selectFrom("EggnetMonitor as m")
+    .innerJoin("EggnetMonitorHistory as h", "m.monster_id", "h.monster_id")
+    .select([
+      "m.monster_id",
+      "m.eggs_donated as current_eggs",
+      "h.timestamp",
+      "h.eggs_donated as eggs",
+    ])
+    .orderBy("h.timestamp", "asc")
+    .execute();
 
-  const monsterEggsById = monsterEggs.reduce<
-    Record<number, (typeof monsterEggs)[0]>
-  >((acc, curr) => {
-    acc[curr.monster_id] = curr;
-    return acc;
-  }, {});
+  const monsterEggsById = Object.groupBy(data, (row) => row.monster_id);
 
   const { allMonsters } = await client.query({
     allMonsters: {
@@ -69,8 +60,12 @@ export async function loader() {
         wiki: m.wiki,
         nocopy: m.nocopy,
         priority: priorities[m.id] ?? 0,
-        eggs: monsterEggsById[m.id]?.eggs_donated ?? 0,
-        history: monsterEggsById[m.id]?.history ?? [],
+        eggs: monsterEggsById[m.id]?.[0]?.current_eggs ?? 0,
+        history:
+          monsterEggsById[m.id]?.map((r) => ({
+            timestamp: r.timestamp,
+            eggs_donated: r.eggs,
+          })) ?? [],
       })) ?? [];
 
   // Ignore nocopy monsters for progress calculation (e.g. embering hulk and infinite meat bug)
@@ -81,40 +76,11 @@ export async function loader() {
     progressMonsters.length * 100,
   ] as const;
 
-  const history = await prisma.$queryRaw<
-    {
-      eggs_donated: number;
-      timestamp: Date;
-    }[]
-  >`
-  WITH ranked AS (
-    SELECT
-      id,
-      monster_id,
-      eggs_donated,
-      timestamp,
-      eggs_donated
-        - COALESCE(
-            LAG(eggs_donated) OVER (
-              PARTITION BY monster_id
-              ORDER BY timestamp ASC, id ASC
-            ),
-            0
-          ) AS delta
-    FROM "EggnetMonitorHistory"
-  )
-  SELECT
-    timestamp,
-    CAST(
-      SUM(delta) OVER (
-        ORDER BY timestamp ASC, id ASC
-        ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
-      )
-      AS DOUBLE PRECISION
-    ) AS eggs_donated
-  FROM ranked
-  ORDER BY timestamp ASC, id ASC;
-  `;
+  const history = await db
+    .selectFrom("eggnet_history")
+    .select(["timestamp", "eggs_donated"])
+    .orderBy("timestamp", "asc")
+    .execute();
 
   return { lastUpdate, monsters, progress, history };
 }

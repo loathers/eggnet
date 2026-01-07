@@ -2,8 +2,7 @@ import { JSDOM } from "jsdom";
 import { Client } from "kol.js";
 import * as url from "node:url";
 
-import { prisma } from "./database.js";
-import { Prisma } from "@prisma/client-generated";
+import { db, refreshEggnetHistory } from "./database.js";
 
 async function fetchDnaLab(): Promise<string> {
   const client = new Client(
@@ -47,48 +46,39 @@ async function updateEggStatus(
   monster_id: number,
   eggs_donated: number,
 ): Promise<void> {
-  await prisma.eggnetMonitor.upsert({
-    where: { monster_id },
-    update: { eggs_donated },
-    create: {
-      monster_id,
-      eggs_donated,
-    },
+  const result = await db.transaction().execute(async (trx) => {
+    await trx
+      .insertInto("EggnetMonitor")
+      .values({ monster_id, eggs_donated })
+      .onConflict((oc) =>
+        oc
+          .column("monster_id")
+          .doUpdateSet({ eggs_donated, last_update: new Date() }),
+      )
+      .execute();
+
+    const historyResult = await trx
+      .insertInto("EggnetMonitorHistory")
+      .values({ monster_id, eggs_donated })
+      .onConflict((oc) =>
+        oc.columns(["monster_id", "eggs_donated"]).doNothing(),
+      )
+      .executeTakeFirst();
+
+    return historyResult.numInsertedOrUpdatedRows ?? 0n;
   });
 
-  try {
-    // This will fail a uniqueness constraint if we've already seen this number.
-    // That's not a problem and will be caught and ignored.
-    await prisma.eggnetMonitorHistory.create({
-      data: {
-        monster_id,
-        eggs_donated,
-      },
-    });
+  // If we just successfully inserted a 100th egg donation, and we previously had an entry for this monster, tell OAF
+  if (result > 0n && eggs_donated === 100) {
+    const hasHistory = await db
+      .selectFrom("EggnetMonitorHistory")
+      .select("id")
+      .where("monster_id", "=", monster_id)
+      .where("eggs_donated", "<", 100)
+      .limit(1)
+      .executeTakeFirst();
 
-    // If we got here (i.e. did not hit the uniqueness constraint)
-    // and this is a report of 100, this monster has (probably) just been unlocked!
-    if (eggs_donated === 100) {
-      // If we don't have any history for this monster, don't do anything.
-      // Maybe we are starting from an empty database for some reason
-      if (
-        (await prisma.eggnetMonitorHistory.count({
-          where: { monster_id },
-        })) <= 1
-      )
-        return;
-
-      // Tell OAF about our discovery!
-      await tellOaf(monster_id);
-    }
-  } catch (error) {
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      if (error.code === "P2002") {
-        // We already have a record of this monster with this egg count
-        return;
-      }
-    }
-    throw error;
+    if (hasHistory) await tellOaf(monster_id);
   }
 }
 
@@ -146,6 +136,10 @@ async function processEggData(html: string): Promise<void> {
     for (const update of updates) {
       await updateEggStatus(update.monster_id, update.eggs_donated);
     }
+
+    // Refresh the materialized view after updates
+    console.log("Refreshing materialized view...");
+    await refreshEggnetHistory();
 
     console.log("Database update completed successfully");
   } catch (error) {
