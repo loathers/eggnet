@@ -88,6 +88,7 @@ async function processEggData(html: string): Promise<void> {
 
     const form = root.querySelector("form");
     if (!form) {
+      console.error("Received HTML:", html);
       throw new Error("No forms found in the page");
     }
 
