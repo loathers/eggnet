@@ -4,15 +4,41 @@ import * as url from "node:url";
 
 import { db, refreshEggnetHistory } from "./database.js";
 
+async function retryWithBackoff<T>(
+  fn: () => Promise<T>,
+  validate: (result: T) => boolean,
+  { maxRetries = 3, baseDelay = 5000 } = {},
+): Promise<T> {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    const result = await fn();
+    if (validate(result)) return result;
+
+    console.warn(`Attempt ${attempt}/${maxRetries} failed, retrying...`);
+    if (attempt < maxRetries) {
+      await new Promise((resolve) =>
+        setTimeout(resolve, baseDelay * attempt),
+      );
+    }
+  }
+
+  throw new Error(`Failed after ${maxRetries} attempts`);
+}
+
 async function fetchDnaLab(): Promise<string> {
   const client = new Client(
     process.env.KOL_USERNAME!,
     process.env.KOL_PASSWORD!,
   );
-  await client.fetchText(
-    "place.php?whichplace=town_right&action=townright_dna",
+
+  return retryWithBackoff(
+    async () => {
+      await client.fetchText(
+        "place.php?whichplace=town_right&action=townright_dna",
+      );
+      return client.fetchText("choice.php?forceoption=0");
+    },
+    (html) => html.trim().length > 0,
   );
-  return await client.fetchText("choice.php?forceoption=0");
 }
 
 async function tellOaf(monsterId: number) {
