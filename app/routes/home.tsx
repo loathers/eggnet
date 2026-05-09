@@ -1,4 +1,4 @@
-import { createClient } from "data-of-loathing";
+import { createClient, Monster } from "data-of-loathing";
 import { useLocalStorage } from "usehooks-ts";
 import { useEffect, useRef } from "react";
 import { Fireworks } from "@fireworks-js/react";
@@ -21,50 +21,37 @@ import { useMemo } from "react";
 const client = createClient();
 
 export async function loader() {
-  // Run all queries in parallel
-  const [lastUpdate, currentEggs, { allMonsters }, history] = await Promise.all(
-    [
-      getLastUpdate(),
-      db
-        .selectFrom("EggnetMonitor")
-        .select(["monster_id", "eggs_donated"])
-        .execute(),
-      client.query({
-        allMonsters: {
-          nodes: {
-            name: true,
-            id: true,
-            image: true,
-            wiki: true,
-            nocopy: true,
-          },
-        },
-      }),
-      db
-        .selectFrom("eggnet_history")
-        .select(["timestamp", "eggs_donated"])
-        .orderBy("timestamp", "asc")
-        .execute(),
-    ],
-  );
+  await client.load();
+
+  const [lastUpdate, currentEggs, dolMonsters, history] = await Promise.all([
+    getLastUpdate(),
+    db
+      .selectFrom("EggnetMonitor")
+      .select(["monster_id", "eggs_donated"])
+      .execute(),
+    client.query.findAll(Monster),
+    db
+      .selectFrom("eggnet_history")
+      .select(["timestamp", "eggs_donated"])
+      .orderBy("timestamp", "asc")
+      .execute(),
+  ]);
 
   const monsterEggsById = new Map(
     currentEggs.map((m) => [m.monster_id, m.eggs_donated] as const),
   );
 
-  const monsters =
-    allMonsters?.nodes
-      .filter((n) => n !== null)
-      .filter((m) => monsterEggsById.has(m.id))
-      .map((m) => ({
-        id: m.id,
-        name: m.name,
-        image: m.image,
-        wiki: m.wiki,
-        nocopy: m.nocopy,
-        priority: priorities[m.id] ?? 0,
-        eggs: monsterEggsById.get(m.id) ?? 0,
-      })) ?? [];
+  const monsters = dolMonsters
+    .filter((m) => monsterEggsById.has(m.id))
+    .map((m) => ({
+      id: m.id,
+      name: m.name,
+      image: m.image,
+      wiki: m.wiki ?? null,
+      nocopy: m.nocopy,
+      priority: priorities[m.id] ?? 0,
+      eggs: monsterEggsById.get(m.id) ?? 0,
+    }));
 
   // Ignore nocopy monsters for progress calculation (e.g. embering hulk and infinite meat bug)
   const progressMonsters = monsters.filter((m) => !m.nocopy);
