@@ -3,6 +3,8 @@ import { useFetcher } from "react-router";
 import { clsx } from "clsx";
 import { decodeHTML } from "entities";
 
+import type { MonsterData } from "~/monster-data.js";
+
 import { History } from "./History.js";
 import styles from "./Monster.module.css";
 import { ProgressBar } from "./ProgressBar.js";
@@ -18,22 +20,12 @@ const badges = [
   "must-have",
 ];
 
-export type MonsterType = {
-  name: string;
-  id: number;
-  eggs: number;
-  image: string | (string | null)[];
-  wiki: string | null;
-  priority: number;
-  nocopy: boolean;
-};
-
 interface MonsterProps {
-  monster: MonsterType;
+  monster: MonsterData;
 }
 
 export const Monster: React.FC<MonsterProps> = ({ monster }) => {
-  const image = Array.isArray(monster.image) ? monster.image[0] : monster.image;
+  const image = monster.image[0];
 
   const [isOpen, setIsOpen] = useState(false);
   const fetcher = useFetcher<{ timestamp: string; eggs_donated: number }[]>();

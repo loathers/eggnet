@@ -1,4 +1,3 @@
-import { createClient, Monster } from "data-of-loathing";
 import { useLocalStorage } from "usehooks-ts";
 import { useEffect, useRef } from "react";
 import { Fireworks } from "@fireworks-js/react";
@@ -6,8 +5,8 @@ import type { FireworksHandlers } from "@fireworks-js/react";
 
 import type { Route } from "./+types/home.js";
 
-import { priorities } from "~/priorities.js";
 import { db, getLastUpdate } from "~/database.js";
+import { getMonsterData } from "~/monster-data.js";
 
 import { type Sort, Tabbar } from "~/components/Tabbar.js";
 import { Monsters } from "~/components/Monsters.js";
@@ -18,18 +17,14 @@ import { Header } from "~/components/Header.js";
 import { Settings } from "~/components/Settings.js";
 import { useMemo } from "react";
 
-const client = createClient();
-
 export async function loader() {
-  await client.load();
-
-  const [lastUpdate, currentEggs, dolMonsters, history] = await Promise.all([
+  const [lastUpdate, currentEggs, monsterData, history] = await Promise.all([
     getLastUpdate(),
     db
       .selectFrom("EggnetMonitor")
       .select(["monster_id", "eggs_donated"])
       .execute(),
-    client.query.findAll(Monster),
+    getMonsterData(),
     db
       .selectFrom("eggnet_history")
       .select(["timestamp", "eggs_donated"])
@@ -41,15 +36,10 @@ export async function loader() {
     currentEggs.map((m) => [m.monster_id, m.eggs_donated] as const),
   );
 
-  const monsters = dolMonsters
+  const monsters = monsterData
     .filter((m) => monsterEggsById.has(m.id))
     .map((m) => ({
-      id: m.id,
-      name: m.name,
-      image: m.image,
-      wiki: m.wiki ?? null,
-      nocopy: m.nocopy,
-      priority: priorities[m.id] ?? 0,
+      ...m,
       eggs: monsterEggsById.get(m.id) ?? 0,
     }));
 
