@@ -6,7 +6,7 @@ import type { FireworksHandlers } from "@fireworks-js/react";
 import type { Route } from "./+types/home.js";
 
 import { db, getLastUpdate } from "~/database.js";
-import { getMonsterData } from "~/monster-data.js";
+import { getMonsterData } from "~/monsterData.js";
 
 import { type Sort, Tabbar } from "~/components/Tabbar.js";
 import { Monsters } from "~/components/Monsters.js";

@@ -3,7 +3,7 @@ import { useFetcher } from "react-router";
 import { clsx } from "clsx";
 import { decodeHTML } from "entities";
 
-import type { MonsterData } from "~/monster-data.js";
+import type { MonsterData } from "~/monsterData.js";
 
 import { History } from "./History.js";
 import styles from "./Monster.module.css";

@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { MonsterData } from "~/monster-data.js";
+import type { MonsterData } from "~/monsterData.js";
 
 import { Monster } from "./Monster.js";
 import styles from "./Monsters.module.css";
