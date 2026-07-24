@@ -209,6 +209,14 @@ async function runUpdate(): Promise<void> {
 if (import.meta.url.startsWith("file:")) {
   const modulePath = url.fileURLToPath(import.meta.url);
   if (process.argv[1] === modulePath) {
-    runUpdate();
+    try {
+      await runUpdate();
+      await db.destroy();
+      // Exit explicitly as kol.js and pg can hold handles that keep the event loop alive
+      process.exit(0);
+    } catch (error) {
+      console.error(error);
+      process.exit(1);
+    }
   }
 }

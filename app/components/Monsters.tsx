@@ -1,10 +1,12 @@
 import { useMemo } from "react";
-import { Monster, type MonsterType } from "./Monster.js";
+import type { MonsterData } from "~/monsterData.js";
+
+import { Monster } from "./Monster.js";
 import styles from "./Monsters.module.css";
 import type { Sort } from "./Tabbar.js";
 
 type Props = {
-  monsters: MonsterType[];
+  monsters: MonsterData[];
   hideCompleted: boolean;
   sort: Sort;
 };
